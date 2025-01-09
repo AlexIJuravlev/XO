@@ -1,0 +1,26 @@
+
+.field{
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 300px;
+	height: auto;
+}
+
+.newGame{
+	font-size: 24px;
+	font-weight: 400;
+	font-style: italic;
+	background-color: aquamarine;
+	margin: 20px auto;
+	padding: 10px;
+	align-items: center;
+	border-radius: 5px;
+	border-color: white;
+	transition: .2s;
+
+}
+
+.newGame:hover{
+	transition: .2s;
+	font-size: 28px;
+}

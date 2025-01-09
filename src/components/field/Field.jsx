@@ -1,0 +1,11 @@
+import FieldLayout from "./FieldLayout";
+
+export default function Field({ arr, click }) {
+	return (
+		<>
+			{arr.map((item, i) => (
+				<FieldLayout key={i} text={item} onClick={() => click(i)} />
+			))}
+		</>
+	);
+}

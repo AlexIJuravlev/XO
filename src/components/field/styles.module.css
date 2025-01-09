@@ -1,0 +1,15 @@
+
+
+.fieldButton{
+
+	height: 100px;
+	width: 100px;
+	background-color: white;
+	font-size: 50px;
+}
+
+.fieldButton:hover{
+	background-color: rgb(172, 233, 235);
+}
+
+
