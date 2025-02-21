@@ -2,14 +2,13 @@
 import Field from './components/field/field';
 import InfoLayout from './components/Information/infoLayout';
 import styles from "./App.module.css";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { store } from './store';
 
 function App() {
-	const [ currentPlayer, setCurrentPlayer ] = useState('X');
-	const [ isGameEnded, setIsGameEnded] = useState(false);
-	const [ isDraw, setIsDraw] = useState(false);
-	const [ field, setField ] = useState(Array(9).fill(null));
-	const winnerGame = winner(field)
+	const [ current, setCurrent ] = useState(store.getState().currentPlayer);
+	const [ fieldNow, setFieldNow ] = useState(store.getState().field);
+	const winnerGame = winner(fieldNow);
 
 
 	function winner(arr){
@@ -31,41 +30,62 @@ function App() {
 			}
 	}
 
+	useEffect(() => {
+			const unsubscribe = store.subscribe(() =>{
+				setCurrent(store.getState().currentPlayer)
+				setFieldNow(store.getState().field);
+			store.getState()
+			});
+		return () => unsubscribe()
+	}, [])
 
-	const walk = (isDraw === false && isGameEnded === false ? `Ход: ${currentPlayer}` : "");
-	const drow = (isDraw === false ? "" : "Ничья");
-	const win = (isDraw === false && isGameEnded === true ? `Победил: ${currentPlayer}`: "");
+
+
+
+
+	const newCurrent = current === "X" ? "O" : "X";
 
 	const choice = (i) => {
-		const FIELD_ARR = [...field]
+		const FIELD_ARR = fieldNow
 		if (winnerGame){
-			setIsGameEnded(true);
-			setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+			store.dispatch({ type: "IS_GAME_ENDED", payload: true });
+			store.dispatch({
+				type: "SET_CURRENT_PLAYER",
+				payload: newCurrent,
+			});
 			return null
 		}
 		if (!winnerGame && FIELD_ARR[i]) {
-			setIsDraw(true);
+			store.dispatch({ type: "IS_DROW", payload: true });
 			return null;
 		}
-		setField(FIELD_ARR)
-		FIELD_ARR[i] = currentPlayer;
-		setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+		setFieldNow(FIELD_ARR);
+		FIELD_ARR[i] = current
+		store.dispatch({
+				type: "SET_CURRENT_PLAYER",
+				payload: newCurrent,
+			});
+
+		console.log(store.getState().currentPlayer);
 
 		console.log(FIELD_ARR);
+
 	}
 
 	const newGame = () => {
-		setCurrentPlayer('X');
-		setIsDraw(false)
-		setIsGameEnded(false)
-		setField(Array(9).fill(null));
+		// setCurrentPlayer('X');
+		// setIsDraw(false)
+		// setIsGameEnded(false)
+		// setFieldNow(Array(9).fill(null));
+		store.dispatch({ type: 'RESTART_GAME' });
+
 	}
 
 	return (
 		<>
-			<InfoLayout walk={walk} drow={drow} winO={win} />
+			<InfoLayout />
 			<div className={styles.field}>
-				{<Field arr={field} click={choice} />}
+				{<Field click={choice} />}
 				<button className={styles.newGame} onClick={newGame}>Начать сначала</button>
 			</div>
 		</>
