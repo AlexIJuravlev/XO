@@ -5,28 +5,28 @@ const initialStore = {
 	field: Array(9).fill(null)
 };
 
-export const appReducer = (state = initialStore, { type, payload }) => {
+export const appReducer = (state = initialStore, action) => {
 
-	switch (type) {
+	switch (action.type) {
 		case "SET_CURRENT_PLAYER":
 			return {
 				...state,
-				currentPlayer: payload,
+				currentPlayer: action.payload,
 			};
 		case "SET_FIELD":
 			return {
 				...state,
-				field: payload,
+				field: action.payload,
 			};
 		case "IS_DROW":
 			return {
 				...state,
-				isDraw: payload,
+				isDraw: action.payload,
 			};
 		case "IS_GAME_ENDED":
 			return {
 				...state,
-				isGameEnded: payload,
+				isGameEnded: action.payload,
 			};
 		case "RESTART_GAME":
 			return {
@@ -35,6 +35,7 @@ export const appReducer = (state = initialStore, { type, payload }) => {
 				isDraw: false,
 				field: Array(9).fill(null),
 			};
+
 		default:
 			return state;
 	}

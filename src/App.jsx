@@ -2,14 +2,19 @@
 import Field from './components/field/field';
 import InfoLayout from './components/Information/infoLayout';
 import styles from "./App.module.css";
-import { useEffect, useState } from 'react';
-import { store } from './store';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	SelectCurrent,
+	SelectField,
+} from "./components/selectors";
+import { RESTART_GAME, IS_GAME_ENDED, SetCurrentPlayer, IS_DROW } from "./components/action";
 
 function App() {
-	const [ current, setCurrent ] = useState(store.getState().currentPlayer);
-	const [ fieldNow, setFieldNow ] = useState(store.getState().field);
-	const winnerGame = winner(fieldNow);
 
+	const filids = useSelector(SelectField);
+	const current = useSelector(SelectCurrent)
+	const dispatch = useDispatch()
+	const winnerGame = winner(filids);
 
 	function winner(arr){
 			const WIN_PATTERNS = [
@@ -30,55 +35,26 @@ function App() {
 			}
 	}
 
-	useEffect(() => {
-			const unsubscribe = store.subscribe(() =>{
-				setCurrent(store.getState().currentPlayer)
-				setFieldNow(store.getState().field);
-			store.getState()
-			});
-		return () => unsubscribe()
-	}, [])
-
-
-
-
-
 	const newCurrent = current === "X" ? "O" : "X";
 
 	const choice = (i) => {
-		const FIELD_ARR = fieldNow
 		if (winnerGame){
-			store.dispatch({ type: "IS_GAME_ENDED", payload: true });
-			store.dispatch({
-				type: "SET_CURRENT_PLAYER",
-				payload: newCurrent,
-			});
+			dispatch(IS_GAME_ENDED);
 			return null
 		}
-		if (!winnerGame && FIELD_ARR[i]) {
-			store.dispatch({ type: "IS_DROW", payload: true });
+		if (!winnerGame && filids[i]) {
+			dispatch(IS_DROW);
 			return null;
 		}
-		setFieldNow(FIELD_ARR);
-		FIELD_ARR[i] = current
-		store.dispatch({
-				type: "SET_CURRENT_PLAYER",
-				payload: newCurrent,
-			});
-
-		console.log(store.getState().currentPlayer);
-
-		console.log(FIELD_ARR);
+		if(!winnerGame){
+		dispatch(SetCurrentPlayer(newCurrent));
+		}
+		filids[i] = current;
 
 	}
 
 	const newGame = () => {
-		// setCurrentPlayer('X');
-		// setIsDraw(false)
-		// setIsGameEnded(false)
-		// setFieldNow(Array(9).fill(null));
-		store.dispatch({ type: 'RESTART_GAME' });
-
+		dispatch(RESTART_GAME);
 	}
 
 	return (

@@ -1,10 +1,13 @@
-import { store } from '../../store';
+import { useSelector } from 'react-redux';
 import styles from './info.module.css'
+import { SelectCurrent, SelectEnded, SelectIsDrow } from '../selectors';
 
 
 export default function Info() {
 
-	const { isDraw, isGameEnded, currentPlayer} = store.getState()
+	const isDraw = useSelector(SelectIsDrow);
+	const isGameEnded = useSelector(SelectEnded);
+	const currentPlayer = useSelector(SelectCurrent);
 
 		const walk =
 			isDraw === false &&
@@ -16,7 +19,7 @@ export default function Info() {
 			isDraw === false && isGameEnded === true
 				? `Победил: ${currentPlayer}`
 				: "";
-				
+
 	return (
 		<>
 			<div className={styles.main}>
